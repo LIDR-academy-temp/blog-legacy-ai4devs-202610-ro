@@ -22,14 +22,24 @@ Borra el ejemplo de abajo cuando escribas el primero.
 
 ## Prompt 1
 
-**Modelo:** Opus 1M xHigh
+**Modelo:** Opus 5.5 Medium
 **Herramienta:** Claude Code
 
 ```
-Este es el ejemplo. Bórralo.
+Este Sistema es un blog que tiene cinco features; posts, comentarios, autores, categorías y etiquetas. Una feature es una funcionalidad del blog de punta a punta de las tres capas del sistema, las cuales son: sus rutas en la API, su tabla en la base de datos y lo que la web enseña de ella. 
 
-El prompt va aquí dentro, entero y con sus saltos de línea,
-para que se sepa dónde empieza y dónde acaba.
+Vas a ejecutar una auditoría priorizada del codigo de las tres capas de implementacion de la feature de comentarios (crear, editar, borrar y listar comentarios). Para llevar a cabo la auditoria contrasta con las reglas de negocio. 
+
+El formato de la auditoria no es negociable: una fila por hallazgo, con estas seis casillas.
+
+1. Qué es. Una frase que describa el hallazgo. Si necesitas tres, es que hay dos hallazgos.
+2. Dónde está, con la línea que lo demuestra. Sin esta casilla, la fila no se escribe.
+3. Qué se rompe, y quién lo nota. El efecto concreto y a quién le llega. "Nadie todavía" es una respuesta válida y buena.
+4. Cuántos sitios hay que tocar. Contados, no estimados.
+5. ¿Se deshace con un revert? Sí o no, y si es que no, por qué no.
+6. ¿Bloquea o desbloquea a otro hallazgo? Nombrando al otro. "A ninguno" es la respuesta más frecuente.
+
+Deja escrita la auditoria en docs/auditoria/comentarios.md. 
 ```
 
-**Qué salió:** (opcional, una línea) funcionó a la primera / tuve que insistir / me inventó una ruta que no existe.
+**Qué salió:** (opcional, una línea) funcionó a la primera 
