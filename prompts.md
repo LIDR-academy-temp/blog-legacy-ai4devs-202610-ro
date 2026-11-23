@@ -99,3 +99,42 @@ He auditado los comentarios en todas las capas: rutas, migración, semilla, gest
 En el documento cada fila trae más detalle: los sitios contados uno a uno y por qué cada «No» no se deshace con un revert. Está guardado en `docs/auditoria/comentarios.md`, sin commitear; no he cambiado nada del código.
 
 Si quieres pasárselo a alguien, puedo publicarlo como página.
+
+
+---
+
+## Prompt 2
+
+**Modelo:** claude-opus-5-5
+**Herramienta:** Claude Code
+
+```
+Revisa si hay algún hallazgo que contradiga a otro o alguna de las reglas. Me parecen muchos hallazgos, se más exahustivo y confirma que los hallazgos encontrados sólo tienen que ver con la funcionalidad de comentarios.
+```
+
+**Respuesta:**
+
+He repasado la tabla contra `CLAUDE.md` y el README y la he reescrito: ahora tiene **22 hallazgos en lugar de 26**. Está en `docs/auditoria/comentarios.md`. Tú ya habías commiteado la versión anterior (`cc92875`), así que el cambio queda sin commitear para que lo revises con `git diff`.
+
+**Contradicciones con las reglas o entre hallazgos, ya corregidas:**
+1. **El orden incumplía el TDD.** Tres contenciones iban antes del test de caracterización, y `CLAUDE.md` exige caracterizar en verde antes de tocar nada. Ahora la caracterización es la #1.
+2. **Dos filas tiraban en direcciones opuestas.** Una contención bajaba el recuento del listado a `= 'aprobado'` (el post 1 pasaría de 4 a 2). Otra fila decía que `'Aprobado'` y `'ok'` también son aprobados, lo que lo devolvería a 4. Ahora la decisión sobre `estado` (#4) va primero y el recuento (#13) depende de ella.
+3. **Una contención se apoyaba en lo que otra fila condenaba.** Proponía un endpoint de aprobación protegido con la misma clave compartida que otra fila daba por mala. Además, aprobar no es una de las cuatro operaciones. Ahora es la #16, marcada como decisión de producto y bloqueada por la de autorización (#8).
+4. **Referencias cruzadas que no casaban.** Una fila decía que desbloqueaba a otras que decían «a ninguno».
+5. **Una fila tenía dos frases** (el anidado y `key={index}`), y había una afirmación sin regla que la respaldara («el moderador no puede editar»). He quitado ambas.
+
+**Qué he quitado o fusionado y por qué:**
+- **Fuera de alcance:** la URL de la API copiada en 6 archivos es configuración de todo el front. También he quitado la referencia a `posts.autor_email`, que es de la feature de posts.
+- **Fusiones de filas con la misma causa:**
+  - Las dos reglas de autorización y «solo se edita lo pendiente» van ahora en una sola fila.
+  - La clave compartida del moderador y el correo como prueba de autoría van juntos en el fondo de autorización.
+  - El correo laxo y el cuerpo laxo van en una fila de validación de entrada.
+
+**Alcance:** he tomado la definición del README («rutas en la API, su tabla y lo que la web enseña de ella»). Con ella entran los tres endpoints, el bloque de comentarios del detalle, la migración, la semilla y los recuentos de comentarios que enseña la web. La tabla de nuevo ya solo tiene filas de eso.
+
+**Siendo más exhaustivo:**
+- **Hallazgo nuevo, comprobado:** el POST no valida tipos. Un `cuerpo` que llega como objeto pasa los `if` y el insert revienta con un 500 (#11).
+- **Lo que revisé y está bien:** no hay inyección SQL, no se puede comentar en un borrador, la regla 2 se cumple y React escapa el texto, así que no hay XSS. Va al final del documento.
+- **Sin reproducir:** la carrera de #10 (devolver el último comentario de la tabla en vez del recién creado) es plausible, pero no la he reproducido. Lo marco así en la fila.
+
+Para la Parte B del README: el agente devolvió 26 hallazgos y luego 22. Cuántos comprobaste tú tiene que salir de ti. Un candidato honesto para «lo que no pude verificar» es la carrera de #10, o qué significaba `'ok'` en el script de importación de 2024.
