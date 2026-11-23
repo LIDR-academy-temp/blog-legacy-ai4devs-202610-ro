@@ -22,14 +22,47 @@ Borra el ejemplo de abajo cuando escribas el primero.
 
 ## Prompt 1
 
-**Modelo:** Opus 1M xHigh
+**Modelo:** Sonnet 5.5
 **Herramienta:** Claude Code
 
 ```
-Este es el ejemplo. Bórralo.
+produce una auditoría priorizada de la feature de comentarios y déjala escrita en docs/auditoria/comentarios.md. Una feature es una funcionalidad del blog de punta a punta: sus rutas en la API, su tabla en la base de datos y lo que la web enseña de ella.
+Quiero que te centres en la funcionalidad y dominio de comentarios
 
-El prompt va aquí dentro, entero y con sus saltos de línea,
-para que se sepa dónde empieza y dónde acaba.
+Y el orden, : primero la precedencia (lo que abarata o desbloquea a otro hallazgo va antes), y dentro de cada nivel, el daño dividido por el radio. Si un hallazgo tiene el daño más alto y la precedencia más baja a la vez, se parte en dos filas, una contención que corta el daño hoy y el arreglo de fondo que espera su turno.
+
+El formato no es negociable: una fila por hallazgo, con estas seis casillas.
+
+Qué es. Una frase. Si necesitas tres, es que hay dos hallazgos.
+
+Dónde está, con la línea que lo demuestra. Sin esta casilla, la fila no se escribe.
+
+Qué se rompe, y quién lo nota. El efecto concreto y a quién le llega. "Nadie todavía" es una respuesta válida y buena.
+
+Cuántos sitios hay que tocar. Contados, no estimados.
+
+¿Se deshace con un revert? Sí o no, y si es que no, por qué no.
+
+¿Bloquea o desbloquea a otro hallazgo? Nombrando al otro. "A ninguno" es la respuesta más frecuente.
 ```
 
 **Qué salió:** (opcional, una línea) funcionó a la primera / tuve que insistir / me inventó una ruta que no existe.
+
+## Prompt 2
+
+**Modelo:** Sonnet 5.5
+**Herramienta:** Claude Code
+
+```
+Estas seguto que quitar el email de la query, no impacta en otras funcionalidades?
+Y que sugieres con H1 en detalle?
+```
+
+## Prompt 3
+
+**Modelo:** Sonnet 5.5
+**Herramienta:** Claude Code
+
+```
+H2 como puede borrar si no tiene la clave de moderacion?
+```
