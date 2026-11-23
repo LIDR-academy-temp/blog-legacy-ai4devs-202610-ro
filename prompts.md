@@ -22,14 +22,33 @@ Borra el ejemplo de abajo cuando escribas el primero.
 
 ## Prompt 1
 
-**Modelo:** Opus 1M xHigh
+**Modelo:** Opus 5.5
 **Herramienta:** Claude Code
 
 ```
-Este es el ejemplo. Bórralo.
-
-El prompt va aquí dentro, entero y con sus saltos de línea,
-para que se sepa dónde empieza y dónde acaba.
+A partir de ahora en está sesión, todos los prompts y su salida añademelos al fichero prompts.md (Es una plantilla)
 ```
 
-**Qué salió:** (opcional, una línea) funcionó a la primera / tuve que insistir / me inventó una ruta que no existe.
+**Qué salió:** Sustituí el ejemplo de la plantilla por esta entrada; a partir de aquí cada prompt de la sesión se añade como `## Prompt N` con su resultado.
+
+## Prompt 2
+
+**Modelo:** Opus 5.5 (orquestador) + subagente general-purpose (Opus 5.5)
+**Herramienta:** Claude Code
+
+```
+Con un agente, produce la auditoría priorizada de la feature de comentarios y déjala escrita en docs/auditoria/comentarios.md, no en el chat.
+
+Solo esa feature. No el sistema entero, aunque quepa y aunque el agente se ofrezca.
+
+El formato no es negociable: una fila por hallazgo, con estas seis casillas.
+
+Qué es. Una frase. Si necesitas tres, es que hay dos hallazgos.
+Dónde está, con la línea que lo demuestra. Sin esta casilla, la fila no se escribe.
+Qué se rompe, y quién lo nota. El efecto concreto y a quién le llega. "Nadie todavía" es una respuesta válida y buena.
+Cuántos sitios hay que tocar. Contados, no estimados.
+¿Se deshace con un revert? Sí o no, y si es que no, por qué no.
+¿Bloquea o desbloquea a otro hallazgo? Nombrando al otro. "A ninguno" es la respuesta más frecuente.
+```
+
+**Qué salió:** El subagente escribió `docs/auditoria/comentarios.md` con 18 hallazgos (C1–C18) en una tabla priorizada; arrancó la API en el 3401 para confirmar la mayoría con curl y después restauró la base. Las 21 referencias `archivo:línea` de la tabla se cotejaron con el código y todas coinciden. Sin verificar: la carrera de C8, lo que pinta la web (C4, C9, C10, C12; solo se leyó el JSX) y la columna de revert, que es razonamiento. La Parte B queda en `_pendiente_` para que la rellene el humano.
