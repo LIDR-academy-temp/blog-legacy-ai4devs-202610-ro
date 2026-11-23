@@ -22,14 +22,64 @@ Borra el ejemplo de abajo cuando escribas el primero.
 
 ## Prompt 1
 
-**Modelo:** Opus 1M xHigh
+**Modelo:** Opus 5.5
 **Herramienta:** Claude Code
 
 ```
-Este es el ejemplo. Bórralo.
-
-El prompt va aquí dentro, entero y con sus saltos de línea,
-para que se sepa dónde empieza y dónde acaba.
+A partir de ahora en está sesión, todos los prompts y su salida añademelos al fichero prompts.md (Es una plantilla)
 ```
 
-**Qué salió:** (opcional, una línea) funcionó a la primera / tuve que insistir / me inventó una ruta que no existe.
+**Qué salió:** Sustituí el ejemplo de la plantilla por esta entrada; a partir de aquí cada prompt de la sesión se añade como `## Prompt N` con su resultado.
+
+## Prompt 2
+
+**Modelo:** Opus 5.5 (orquestador) + subagente general-purpose (Opus 5.5)
+**Herramienta:** Claude Code
+
+```
+Con un agente, produce la auditoría priorizada de la feature de comentarios y déjala escrita en docs/auditoria/comentarios.md, no en el chat.
+
+Solo esa feature. No el sistema entero, aunque quepa y aunque el agente se ofrezca.
+
+El formato no es negociable: una fila por hallazgo, con estas seis casillas.
+
+Qué es. Una frase. Si necesitas tres, es que hay dos hallazgos.
+Dónde está, con la línea que lo demuestra. Sin esta casilla, la fila no se escribe.
+Qué se rompe, y quién lo nota. El efecto concreto y a quién le llega. "Nadie todavía" es una respuesta válida y buena.
+Cuántos sitios hay que tocar. Contados, no estimados.
+¿Se deshace con un revert? Sí o no, y si es que no, por qué no.
+¿Bloquea o desbloquea a otro hallazgo? Nombrando al otro. "A ninguno" es la respuesta más frecuente.
+```
+
+**Qué salió:** El subagente escribió `docs/auditoria/comentarios.md` con 18 hallazgos (C1–C18) en una tabla priorizada; arrancó la API en el 3401 para confirmar la mayoría con curl y después restauró la base. Las 21 referencias `archivo:línea` de la tabla se cotejaron con el código y todas coinciden. Sin verificar: la carrera de C8, lo que pinta la web (C4, C9, C10, C12; solo se leyó el JSX) y la columna de revert, que es razonamiento. La Parte B queda en `_pendiente_` para que la rellene el humano.
+
+## Prompt 3
+
+**Modelo:** Opus 5.5
+**Herramienta:** Claude Code
+
+```
+Primero haz un commit con un texto explicativo y luego quiero que me ordenes la lista de en capas con el siguiente criterio de orden:
+
+Primera clave: precedencia. Es un orden topológico, no un juicio. Si el arreglo de A abarata el de B, A va antes y no se discute: es una dependencia, como compilar antes de ejecutar.
+
+Segunda clave, dentro de cada nivel: daño dividido por radio. No daño a secas. Dos hallazgos con el mismo daño no valen lo mismo si uno se arregla tocando un sitio y el otro tocando once, y esa división es lo que impide que las cosas pequeñas y molestas se queden nueve años sin arreglar por no ser nunca lo más grave del día.
+
+Por ejemplo:
+Capa 1: No depende de ninguno y dentro de este nivel el orden depende del numero de los sitios que hay que tocar.
+Capa 2: Depende de lo arreglado en capa 1 y  y dentro de este nivel el orden depende del numero de los sitios que hay que tocar.
+Capa N: Depende de lo arreglado en la capa N-1  y dentro de este nivel el orden depende del numero de los sitios que hay que tocar
+```
+
+**Qué salió:** Commit `bc0be84` (`docs: auditoría priorizada de la feature de comentarios`) en la rama nueva `auditoria-comentarios`, y la sección «Orden de ataque por capas» en la auditoría: 3 capas (C17→C16→7 hallazgos; C7→C5, C6), ordenadas dentro de cada una por daño (escala 1–5 explicitada) ÷ sitios. Descarté como precedencia las relaciones «mitiga/dispara/agrava» porque bajan el daño, no el coste del arreglo.
+
+## Prompt 4
+
+**Modelo:** Opus 5.5
+**Herramienta:** Claude Code
+
+```
+mis iniciales son eds por lo que crea un commit y un PR como indica en README
+```
+
+**Qué salió:** Renombré la rama a `auditoria-eds`, commiteé el orden por capas y `prompts.md`, empujé al fork y abrí el PR contra `s6/start` del repositorio del curso.
