@@ -25,6 +25,69 @@ Alcance: comentarios de punta a punta: API (`POST /posts/:slug/comentarios`, `PA
 
 Criterio de prioridad: primero lo que expone datos personales o destruye contenido de forma irreversible (C1–C4). Después, las violaciones de las reglas 2, 5 y 6 que ve el lector (C5–C9). Luego la validación y la autorización incoherentes (C10–C15). Al final, la deuda estructural que no rompe nada visible hoy (C16–C18).
 
+## Orden de ataque por capas
+
+**Primera clave: precedencia (orden topológico).** A va antes que B si arreglar A abarata arreglar B. Las aristas salen de la columna «¿Bloquea o desbloquea?»:
+
+- C17 → C16 (no se refactoriza sin caracterización).
+- C7 → C5, C6 (sin un único valor de «aprobado» no hay filtro correcto).
+- C16 → C8, C10, C11, C12, C13, C14, C15 (validador, servicio, repositorio y transformer dan un sitio único donde arreglarlos).
+
+No cuentan como precedencia, porque **bajan el daño, no el coste del arreglo**: C1 «mitiga» C2, C2 «dispara» C4 y C12 «agrava» C4. Arreglar uno no hace más barato el código del otro.
+
+**Segunda clave, dentro de cada capa: daño ÷ radio.** El radio es la columna «Cuántos sitios hay que tocar». El daño va en una escala de 1 a 5:
+
+- 5: datos personales o contenido perdidos de forma irreversible, al alcance de cualquier lector.
+- 4: incumple una regla de negocio y lo ve cualquier lector.
+- 3: efecto visible y erróneo para algunos usuarios.
+- 2: incoherencia o riesgo que hoy notan pocos (comentarista, operador o desarrollador).
+- 1: nadie todavía.
+
+Desempates: menos sitios primero; si persiste, el que más hallazgos desbloquea, y después el id.
+
+### Capa 1: no depende de ninguno
+
+| Orden | # | Qué es (resumen) | Daño | Sitios | Daño ÷ radio |
+|---|---|---|---|---|---|
+| 1 | C2 | Borrar un comentario solo exige conocer el correo del autor | 5 | 1 | **5,0** |
+| 2 | C1 | El detalle del post expone el correo de quien comenta | 5 | 2 | **2,5** |
+| 3 | C17 | El único test de comentarios solo afirma `autor_nombre` | 2 | 1 | **2,0** |
+| 4 | C9 | La web suma 1 al recuento con el comentario aún pendiente | 2 | 1 | **2,0** |
+| 5 | C3 | Clave de moderación escrita como literal en el código | 4 | 2 | **2,0** |
+| 6 | C18 | `post_id` sin clave foránea ni índice | 1 | 1 | **1,0** |
+| 7 | C4 | Las respuestas de un padre borrado quedan huérfanas y ocultas | 3 | 3 | **1,0** |
+| 8 | C7 | `estado` es texto libre y la semilla mezcla tres valores | 2 | 5 | **0,4** |
+
+C17 va por delante de C9 aunque empatan en daño y en sitios, porque desbloquea la capa 2 (C16) y con ella toda la capa 3.
+
+### Capa 2: depende de lo arreglado en la capa 1
+
+| Orden | # | Qué es (resumen) | Depende de | Daño | Sitios | Daño ÷ radio |
+|---|---|---|---|---|---|---|
+| 1 | C6 | El detalle oculta los aprobados guardados como `'Aprobado'` u `'ok'` | C7 | 4 | 1 | **4,0** |
+| 2 | C5 | El recuento del listado y de relacionados no cuenta solo los aprobados | C7 | 4 | 2 | **2,0** |
+| 3 | C16 | Los tres endpoints son closures en `routes.ts`, sin ninguna capa | C17 | 2 | 10 | **0,2** |
+
+El radio de C16 es 10: las 3 closures de `routes.ts:295`, `:339` y `:366`, más 7 piezas nuevas (modelo, controlador, validador, servicio, repositorio, transformer y el alias `#repositories/*` en `package.json`).
+
+### Capa 3: depende de lo arreglado en la capa 2 (C16)
+
+| Orden | # | Qué es (resumen) | Daño | Sitios | Daño ÷ radio |
+|---|---|---|---|---|---|
+| 1 | C12 | El POST acepta un `padre_id` inexistente o de otro post | 3 | 1 | **3,0** |
+| 2 | C8 | El POST responde con el último comentario de la tabla, no con el creado | 2 | 1 | **2,0** |
+| 3 | C11 | Como correo vale cualquier cosa que lleve `@` | 2 | 1 | **2,0** |
+| 4 | C13 | PATCH y DELETE aplican reglas de autoría distintas | 2 | 2 | **1,0** |
+| 5 | C14 | El PATCH no exige la longitud mínima del POST | 2 | 2 | **1,0** |
+| 6 | C15 | POST y PATCH devuelven la fila cruda en vez de un transformer | 2 | 2 | **1,0** |
+| 7 | C10 | Validación con `if`s y cuatro formatos de error, uno de ellos `200 {ok:false}` | 3 | 5 | **0,6** |
+
+### Notas del orden
+
+- **C4, C7 y C18 exigen recrear la tabla `comentarios`.** SQLite no añade un CHECK ni una FK con `ALTER TABLE`. No es precedencia, porque ninguno abarata a otro, pero conviene hacerlos en la misma migración para pagar la recreación una sola vez.
+- **C2 y C13 tocan la misma línea (`routes.ts:353`).** Si C2 se arregla en capa 1 sobre la closure legacy, C13 lo reescribe en capa 3. Es un coste aceptado: el daño de C2 (5) no puede esperar a C16.
+- **El daño es un juicio y el radio es un recuento.** Cambiar un daño en un punto puede mover un hallazgo dentro de su capa, pero nunca lo saca de ella.
+
 ## Parte B
 
 1. **Hallazgos devueltos por el agente / comprobados por mí abriendo el archivo:** 18/14
