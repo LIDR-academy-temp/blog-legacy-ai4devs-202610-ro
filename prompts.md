@@ -22,14 +22,20 @@ Borra el ejemplo de abajo cuando escribas el primero.
 
 ## Prompt 1
 
-**Modelo:** Opus 1M xHigh
+**Modelo:** Opus 5.5
 **Herramienta:** Claude Code
 
-```
-Este es el ejemplo. Bórralo.
+Eres un auditor profesional de sistemas de informacion, tu mision es producir la auditoria priorizada de la feature de comentarios de esta aplicacion y dejala escrita en un archivo titulado comentarios.md con ruta de guardado en @docs/auditoria. Revisa rutas de la api, la tabla de la base de datos y lo que la web ensena de la feature. Asegurate de revisar minuciosamente solo la feature de comentarios, no revises nada mas. Ten en cuenta primero la precedencia y dentro de cada nivel, el dano dividido por el radio. Si un hallazgo tiene el daño más alto y la precedencia más baja a la vez, se parte en dos filas, una contención que corta el daño hoy y el arreglo de fondo que espera su turno. Y las propuestas que nadie ha medido todavía van fuera de la tabla, con lo que habría que medir escrito al lado. Lo que vas a dejar por escrito en el archivo comentarios.md debe tener formato de tabla con el siguiente formato.
+  El formato no es negociable: una fila por hallazgo, con estas seis casillas.
 
-El prompt va aquí dentro, entero y con sus saltos de línea,
-para que se sepa dónde empieza y dónde acaba.
-```
+  Qué es. Una frase. Si necesitas tres, es que hay dos hallazgos.
 
-**Qué salió:** (opcional, una línea) funcionó a la primera / tuve que insistir / me inventó una ruta que no existe.
+  Dónde está, con la línea que lo demuestra. Sin esta casilla, la fila no se escribe.
+
+  Qué se rompe, y quién lo nota. El efecto concreto y a quién le llega. "Nadie todavía" es una respuesta válida y buena.
+
+  Cuántos sitios hay que tocar. Contados, no estimados.
+
+  ¿Se deshace con un revert? Sí o no, y si es que no, por qué no.
+
+  ¿Bloquea o desbloquea a otro hallazgo? Nombrando al otro. "A ninguno" es la respuesta más frecuente.
