@@ -22,14 +22,22 @@ Borra el ejemplo de abajo cuando escribas el primero.
 
 ## Prompt 1
 
-**Modelo:** Opus 1M xHigh
+**Modelo:** claude-opus-5-5
 **Herramienta:** Claude Code
 
 ```
-Este es el ejemplo. Bórralo.
-
-El prompt va aquí dentro, entero y con sus saltos de línea,
-para que se sepa dónde empieza y dónde acaba.
+revisa el archivo prompts.md y sigue las instrucciones para loguear todos los prompts
 ```
 
-**Qué salió:** (opcional, una línea) funcionó a la primera / tuve que insistir / me inventó una ruta que no existe.
+**Qué salió:** funcionó a la primera: montó el hook `.claude/hooks/log-prompt.mjs` que registra cada prompt solo.
+
+## Prompt 2
+
+**Modelo:** claude-opus-5-5
+**Herramienta:** Claude Code
+
+```
+produce una auditoria priorizada de la feature de comentarios y escribela en docs/auditoria/comentarios.md. El order de prioridad es el siguiente: primero la precedencia - lo que abarata o desbloquea algo va antes, y dentro de cada nivel, el daño dividio por el radio. Si un hallazgo tiene el daño mas alto y la precendecia mas bbaja a la vez, separalo en dos fila: una de contencion para corregir el daño de inmediato y el arreglo a fondo mas tarde. el formato debera ser una fila por hallazgo, con estas columnas:  que es (en una frase), donde esta (con la referencia al numero de linea - si no hay no se escribe la fila), que se rompe y quien lo nota (efecto concreto y donde se ve), cuantos lugares en el codigo hay que tocar (contados), se puede hacer revert? (si o no, y si no, por que no?), bloquea o desbloquea otro hallazgo? (nombrando el otro hallazgo si existe, o "ninguno" si es el caso)
+```
+
+**Qué salió:** 
