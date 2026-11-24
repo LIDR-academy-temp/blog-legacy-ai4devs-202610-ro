@@ -22,14 +22,22 @@ Borra el ejemplo de abajo cuando escribas el primero.
 
 ## Prompt 1
 
-**Modelo:** Opus 1M xHigh
+**Modelo:** Sonet 5.5 Medium
 **Herramienta:** Claude Code
 
 ```
-Este es el ejemplo. Bórralo.
+Check repo at path "/home/alfonso/Documents/AI-Train/courses/L1DR/repo/blog-legacy-ai4devs-202610-ro" . We will audit the "commentarios" feature with its 3 layers, "crear", "ditar", "borrar", and "listar". 
 
-El prompt va aquí dentro, entero y con sus saltos de línea,
-para que se sepa dónde empieza y dónde acaba.
+We will use the following format. One row per finding with the following 6  features
+
+"Que es". A single sentence. If you need three, it means there are two separate findings.
+"Dónde está", including the specific line that demonstrates it. Without this field, the entry cannot be written.
+"Qué se rompe, y quién lo nota". The specific impact and who is affected by it. "Nadie todavía" is a perfectly valid and acceptable answer.
+"Cuántos sitios hay que tocar". An exact count, not an estimate.
+"¿Se deshace con un revert?" Yes or no; if no, explain why.
+"¿Bloquea o desbloquea a otro hallazgo?" Specify which one. "A ninguno" is the most common answer.
+
+Write the findings in "docs/auditoria/"
 ```
 
-**Qué salió:** (opcional, una línea) funcionó a la primera / tuve que insistir / me inventó una ruta que no existe.
+**Qué salió:** funcionó a la primera .
