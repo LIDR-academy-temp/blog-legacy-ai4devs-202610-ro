@@ -22,14 +22,21 @@ Borra el ejemplo de abajo cuando escribas el primero.
 
 ## Prompt 1
 
-**Modelo:** Opus 1M xHigh
+**Modelo:** Opus 5.5 auto
 **Herramienta:** Claude Code
 
 ```
-Este es el ejemplo. Bórralo.
-
-El prompt va aquí dentro, entero y con sus saltos de línea,
-para que se sepa dónde empieza y dónde acaba.
+produce la auditoría priorizada de la feature de comentarios y déjala escrita en docs/auditoria/comentarios.md
+Con el siguiente formato, una fila por cada hallazgo
+1. **Qué es.** Una frase. Si necesitas tres, es que hay dos hallazgos.
+2. **Dónde está**, con **la línea que lo demuestra**. Sin esta casilla, la fila no se escribe.
+3. **Qué se rompe, y quién lo nota.** El efecto concreto y a quién le llega. *"Nadie todavía"*
+   es una respuesta válida y buena.
+4. **Cuántos sitios hay que tocar.** Contados, no estimados.
+5. **¿Se deshace con un revert?** Sí o no, y si es que no, por qué no.
+6. **¿Bloquea o desbloquea a otro hallazgo?** Nombrando al otro. *"A ninguno"* es la respuesta
+   más frecuente.
 ```
 
-**Qué salió:** (opcional, una línea) funcionó a la primera / tuve que insistir / me inventó una ruta que no existe.
+**Qué salió:** 
+La auditoría está en docs/auditoria/comentarios.md: 18 hallazgos, cada uno en una fila con las seis casillas y ordenados por prioridad. Cada hallazgo lleva un enlace a la línea de código que lo demuestra.
